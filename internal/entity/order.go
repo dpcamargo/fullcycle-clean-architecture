@@ -4,9 +4,9 @@ import "errors"
 
 type Order struct {
 	ID         string
-	Price      float64
-	Tax        float64
-	FinalPrice float64
+	Price      float32
+	Tax        float32
+	FinalPrice float32
 }
 
 const (
@@ -15,7 +15,7 @@ const (
 	InvalidTax   = "invalid tax"
 )
 
-func NewOrder(id string, price, tax float64) (*Order, error) {
+func NewOrder(id string, price, tax float32) (*Order, error) {
 	order := &Order{
 		ID:    id,
 		Price: price,

@@ -1,18 +1,21 @@
 package usecase
 
-import "github.com/dpcamargo/fullcycle-clean-architecture/internal/entity"
+import (
+	"github.com/dpcamargo/fullcycle-clean-architecture/internal/entity"
+	"github.com/dpcamargo/fullcycle-clean-architecture/internal/events"
+)
 
 type OrderInputDTO struct {
 	ID    string  `json:"id"`
-	Price float64 `json:"price"`
-	Tax   float64 `json:"tax"`
+	Price float32 `json:"price"`
+	Tax   float32 `json:"tax"`
 }
 
 type OrderOutputDTO struct {
 	ID         string  `json:"id"`
-	Price      float64 `json:"price"`
-	Tax        float64 `json:"tax"`
-	FinalPrice float64 `json:"final_price"`
+	Price      float32 `json:"price"`
+	Tax        float32 `json:"tax"`
+	FinalPrice float32 `json:"final_price"`
 }
 
 type CreateOrderUsecase struct {
