@@ -7,7 +7,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/dpcamargo/fullcycle-clean-architecture/infra/graph"
+	"github.com/dpcamargo/fullcycle-clean-architecture/internal/infra/graph"
 )
 
 const defaultPort = "8080"
