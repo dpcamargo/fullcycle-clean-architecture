@@ -2,7 +2,7 @@ package usecase
 
 import (
 	"github.com/dpcamargo/fullcycle-clean-architecture/internal/entity"
-	"github.com/dpcamargo/fullcycle-clean-architecture/internal/events"
+	"github.com/dpcamargo/fullcycle-clean-architecture/pkg/events"
 )
 
 type OrderInputDTO struct {

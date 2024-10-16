@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/dpcamargo/fullcycle-clean-architecture/internal/entity"
-	"github.com/dpcamargo/fullcycle-clean-architecture/internal/events"
 	"github.com/dpcamargo/fullcycle-clean-architecture/internal/usecase"
+	"github.com/dpcamargo/fullcycle-clean-architecture/pkg/events"
 )
 
 type WebOrderHandler struct {

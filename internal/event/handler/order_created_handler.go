@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/dpcamargo/fullcycle-clean-architecture/internal/events"
+	"github.com/dpcamargo/fullcycle-clean-architecture/pkg/events"
 	"github.com/streadway/amqp"
 )
 
@@ -21,22 +21,19 @@ func NewOrderCreatedHandler(rabbitMQChannel *amqp.Channel) *OrderCreatedHandler 
 
 func (h *OrderCreatedHandler) Handle(event events.EventInterface, wg *sync.WaitGroup) {
 	defer wg.Done()
-	fmt.Printf("Order created: %v\n", event.GetPayload())
+	fmt.Printf("Order created: %v", event.GetPayload())
 	jsonOutput, _ := json.Marshal(event.GetPayload())
 
-	msgRabbitMQ := amqp.Publishing{
+	msgRabbitmq := amqp.Publishing{
 		ContentType: "application/json",
 		Body:        jsonOutput,
 	}
-	err := h.RabbitMQChannel.Publish(
+
+	h.RabbitMQChannel.Publish(
 		"amq.direct", // exchange
-		"",           // key
+		"",           // key name
 		false,        // mandatory
 		false,        // immediate
-		msgRabbitMQ,  // msg
+		msgRabbitmq,  // message to publish
 	)
-	if err != nil {
-		fmt.Printf("Error publishing message to RabbitMQ: %v\n", err)
-		return
-	}
 }
