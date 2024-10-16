@@ -1,0 +1,17 @@
+FROM golang:1.18 as builder
+
+   WORKDIR /app
+   COPY . .
+
+   # Install Goose
+   RUN go get -u github.com/pressly/goose/v3
+
+   # Build the application (if needed)
+   # RUN go build -o migrator .
+
+   FROM golang:1.18
+   WORKDIR /app
+   COPY --from=builder /go/bin/goose /usr/local/bin/goose
+   COPY . .
+
+   CMD ["goose", "up"]
