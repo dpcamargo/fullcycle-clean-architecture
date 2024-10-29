@@ -3,10 +3,10 @@ package entity
 import "errors"
 
 type Order struct {
-	ID         string
-	Price      float32
-	Tax        float32
-	FinalPrice float32
+	ID         int
+	Price      float64
+	Tax        float64
+	FinalPrice float64
 }
 
 const (
@@ -15,7 +15,7 @@ const (
 	InvalidTax   = "invalid tax"
 )
 
-func NewOrder(id string, price, tax float32) (*Order, error) {
+func NewOrder(id int, price, tax float64) (*Order, error) {
 	order := &Order{
 		ID:    id,
 		Price: price,
@@ -29,7 +29,7 @@ func NewOrder(id string, price, tax float32) (*Order, error) {
 }
 
 func (o *Order) IsValid() error {
-	if o.ID == "" {
+	if o.ID <= 0 {
 		return errors.New(InvalidID)
 	}
 	if o.Price <= 0 {

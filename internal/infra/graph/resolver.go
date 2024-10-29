@@ -7,5 +7,5 @@ import "github.com/dpcamargo/fullcycle-clean-architecture/internal/usecase"
 // It serves as dependency injection for your app, add any dependencies you require here.
 
 type Resolver struct {
-	CreateOrderUseCase usecase.OrderUsecase
+	OrderUseCase usecase.OrderUsecase
 }

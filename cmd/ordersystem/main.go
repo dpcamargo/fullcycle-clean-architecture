@@ -49,24 +49,24 @@ func main() {
 	webOrderHandler := NewWebOrderHandler(db, eventDispatcher)
 	webServer.AddHandler("/order", webOrderHandler.Create, webserver.POST)
 	webServer.AddHandler("/order", webOrderHandler.Get, webserver.GET)
-	fmt.Println("Starting web server on port", configs.WebServerPort)
+	log.Println("Starting web server on port", configs.WebServerPort)
 	go webServer.Start()
 
 	grpcServer := grpc.NewServer()
 	createOrderService := service.NewOrderService(*createOrderUsecase)
 	pb.RegisterOrderServiceServer(grpcServer, createOrderService)
 	reflection.Register(grpcServer)
-	fmt.Println("Starting gRPC server on port", configs.GRPCServerPort)
+	log.Println("Starting gRPC server on port", configs.GRPCServerPort)
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", configs.GRPCServerPort))
 	if err != nil {
 		panic(err)
 	}
 	go grpcServer.Serve(lis)
 
-	srv := graphHandler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
+	srv := graphHandler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{OrderUseCase: *createOrderUsecase}}))
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	http.Handle("/query-graphql", srv)
+	http.Handle("/query", srv)
 
 	log.Println("Starting GraphQL server on port", configs.GraphQLServerPort)
 	log.Fatal(http.ListenAndServe(":"+configs.GraphQLServerPort, nil))

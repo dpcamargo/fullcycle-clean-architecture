@@ -6,14 +6,14 @@ type Mutation struct {
 }
 
 type Order struct {
-	ID         string  `json:"id"`
+	ID         int     `json:"id"`
 	Price      float64 `json:"Price"`
 	Tax        float64 `json:"Tax"`
 	FinalPrice float64 `json:"FinalPrice"`
 }
 
 type OrderInput struct {
-	ID    string  `json:"id"`
+	ID    int     `json:"id"`
 	Price float64 `json:"Price"`
 	Tax   float64 `json:"Tax"`
 }

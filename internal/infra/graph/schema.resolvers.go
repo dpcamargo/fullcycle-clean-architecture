@@ -6,17 +6,65 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/dpcamargo/fullcycle-clean-architecture/internal/infra/graph/model"
+	"github.com/dpcamargo/fullcycle-clean-architecture/internal/usecase"
 )
 
 // CreateOrder is the resolver for the createOrder field.
 func (r *mutationResolver) CreateOrder(ctx context.Context, input *model.OrderInput) (*model.Order, error) {
-	panic(fmt.Errorf("not implemented: CreateOrder - createOrder"))
+	order := usecase.OrderInputDTO{
+		ID:    input.ID,
+		Price: input.Price,
+		Tax:   input.Tax,
+	}
+	orderCreated, err := r.OrderUseCase.CreateOrder(order)
+	if err != nil {
+		return nil, err
+	}
+	res := &model.Order{
+		ID:         orderCreated.ID,
+		Price:      orderCreated.Price,
+		Tax:        orderCreated.Tax,
+		FinalPrice: orderCreated.FinalPrice,
+	}
+
+	return res, nil
+}
+
+// GetOrder is the resolver for the getOrder field.
+func (r *queryResolver) GetOrder(ctx context.Context, id int) (*model.Order, error) {
+	order, err := r.OrderUseCase.GetOrder(id)
+	if err != nil {
+		return nil, err
+	}
+	res := &model.Order{
+		ID:         order.ID,
+		Price:      order.Price,
+		Tax:        order.Tax,
+		FinalPrice: order.FinalPrice,
+	}
+
+	return res, nil
 }
 
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
+// Query returns QueryResolver implementation.
+func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
+
 type mutationResolver struct{ *Resolver }
+type queryResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//    it when you're done.
+//  - You have helper methods in this file. Move them out to keep these resolver files clean.
+/*
+	func (r *queryResolver) Order(ctx context.Context, id int) (*model.Order, error) {
+	panic(fmt.Errorf("not implemented: Order - order"))
+}
+*/
