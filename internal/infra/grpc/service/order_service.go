@@ -9,10 +9,10 @@ import (
 
 type OrderService struct {
 	pb.UnimplementedOrderServiceServer
-	CreateOrderUsecase usecase.CreateOrderUsecase
+	CreateOrderUsecase usecase.OrderUsecase
 }
 
-func NewOrderService(createOrderUsecase usecase.CreateOrderUsecase) *OrderService {
+func NewOrderService(createOrderUsecase usecase.OrderUsecase) *OrderService {
 	return &OrderService{
 		CreateOrderUsecase: createOrderUsecase,
 	}
@@ -24,7 +24,7 @@ func (s *OrderService) CreateOrder(ctx context.Context, in *pb.CreateOrderReques
 		Price: in.Price,
 		Tax:   in.Tax,
 	}
-	output, err := s.CreateOrderUsecase.Execute(dto)
+	output, err := s.CreateOrderUsecase.CreateOrder(dto)
 	if err != nil {
 		return nil, err
 	}

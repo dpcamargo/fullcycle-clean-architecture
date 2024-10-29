@@ -3,6 +3,7 @@ package web
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/dpcamargo/fullcycle-clean-architecture/internal/entity"
 	"github.com/dpcamargo/fullcycle-clean-architecture/internal/usecase"
@@ -34,13 +35,35 @@ func (h *WebOrderHandler) Create(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 
-	createOrder := usecase.NewCreateOrderUsecase(h.OrderRepository, h.OrderCreatedEvent, h.EventDispatcher)
-	output, err := createOrder.Execute(dto)
+	orderUsecase := usecase.NewOrderUsecase(h.OrderRepository, h.OrderCreatedEvent, h.EventDispatcher)
+	output, err := orderUsecase.CreateOrder(dto)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	err = json.NewEncoder(w).Encode(output)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (h *WebOrderHandler) Get(w http.ResponseWriter, r *http.Request) {
+	param := r.URL.Query().Get("id")
+	orderID, err := strconv.Atoi(param)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	orderUsecase := usecase.NewOrderUsecase(h.OrderRepository, h.OrderCreatedEvent, h.EventDispatcher)
+	order, err := orderUsecase.GetOrder(orderID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(order)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

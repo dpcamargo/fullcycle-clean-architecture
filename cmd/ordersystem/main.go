@@ -43,11 +43,12 @@ func main() {
 		RabbitMQChannel: rabbitMQChannel,
 	})
 
-	createOrderUsecase := NewCreateOrderUseCase(db, eventDispatcher)
+	createOrderUsecase := NewOrderUseCase(db, eventDispatcher)
 
 	webServer := webserver.NewWebServer(configs.WebServerPort)
 	webOrderHandler := NewWebOrderHandler(db, eventDispatcher)
 	webServer.AddHandler("/order", webOrderHandler.Create, webserver.POST)
+	webServer.AddHandler("/order", webOrderHandler.Get, webserver.GET)
 	fmt.Println("Starting web server on port", configs.WebServerPort)
 	go webServer.Start()
 
@@ -65,7 +66,7 @@ func main() {
 	srv := graphHandler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	http.Handle("/query", srv)
+	http.Handle("/query-graphql", srv)
 
 	log.Println("Starting GraphQL server on port", configs.GraphQLServerPort)
 	log.Fatal(http.ListenAndServe(":"+configs.GraphQLServerPort, nil))

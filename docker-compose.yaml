@@ -9,8 +9,8 @@ services:
       MYSQL_PASSWORD: root
     ports:
       - 3306:3306
-    volumes:
-      - mysql_data:/var/lib/mysql
+    networks:
+      - app-network
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -22,6 +22,8 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - app-network
 
   migrator:
     build: 
@@ -35,6 +37,9 @@ services:
       DB_USER: root
       DB_PASSWORD: root
       DB_NAME: orders
+    networks:
+      - app-network
 
-volumes:
-  mysql_data:
+networks:
+  app-network:
+    driver: bridge

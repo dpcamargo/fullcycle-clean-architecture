@@ -42,7 +42,7 @@ func (o *Order) IsValid() error {
 }
 
 func (o *Order) CalculateFinalPrice() error {
-	o.FinalPrice = o.Price * (1 + (o.Tax /100))
+	o.FinalPrice = o.Price * (1 + (o.Tax / 100))
 	err := o.IsValid()
 	if err != nil {
 		return err

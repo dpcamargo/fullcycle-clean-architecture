@@ -1,17 +1,18 @@
-FROM golang:1.18 as builder
+FROM golang:1.23 AS builder
+WORKDIR /app
+RUN git clone https://github.com/pressly/goose.git .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags='no_postgres no_sqlite3 no_ydb' -o goose ./cmd/goose
 
-   WORKDIR /app
-   COPY . .
+FROM alpine:3.12
+WORKDIR /app
+RUN apk add --no-cache bash mysql-client
+COPY /migration .
+COPY wait-for-it.sh /usr/local/bin/wait-for-it
+RUN chmod +x /usr/local/bin/wait-for-it
+COPY --from=builder /app/goose /usr/local/bin/goose
+RUN chmod +x /usr/local/bin/goose
+RUN /usr/local/bin/goose --version
 
-   # Install Goose
-   RUN go get -u github.com/pressly/goose/v3
-
-   # Build the application (if needed)
-   # RUN go build -o migrator .
-
-   FROM golang:1.18
-   WORKDIR /app
-   COPY --from=builder /go/bin/goose /usr/local/bin/goose
-   COPY . .
-
-   CMD ["goose", "up"]
+# CMD ["goose", "mysql", "root:root@tcp(mysql:3306)/orders?parseTime=true", "up"]
+# CMD ["sh", "-c", "sleep 10; goose mysql 'root:root@tcp(mysql:3306)/orders?parseTime=true' up"]
+CMD ["sh", "-c", "/usr/local/bin/wait-for-it mysql:3306 -- goose mysql 'root:root@tcp(mysql:3306)/orders?parseTime=true' up"]
