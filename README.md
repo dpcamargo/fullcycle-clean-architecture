@@ -1,10 +1,27 @@
 # Fullcycle Clean Architecture Challenge
-Desafio da pós graduação Go Expert da Full Cycle para produzir um serviço com API REST, graphQL, gRPC e RabbitMQ para o cadastro e coleta de orders.
 
+Full Cycle's post graduate course Go Expert challenge to develop a service with API RAPI REST, graphQL, gRPC and RabbitMQ for order registration and listing.
 
+## Service Ports
 
+web server on port :8001
 
-GraphQL queries:
+gRPC server on port 50051
+
+GraphQL server on port 8080
+
+## Starting complimentary services
+
+Run `docker compose up -d` to create the MySQL and RabbitMQ containers and do the necessary migration.
+
+## API Rest
+
+Test using order_create.http and order_get.http (vscode plugin needed)
+
+## GraphQL
+
+Open `http://localhost:8080/query` and use the following queries:
+
 ```
 mutation createOrder{
   createOrder(
@@ -20,4 +37,17 @@ query getOrder {
     FinalPrice
   }
 }
+
+query getList {
+  getList {
+    id
+    Price
+    Tax
+    FinalPrice
+  }
+}
 ```
+
+## gRPC
+
+Use `evans -r repl` to connect to gRPC server.
