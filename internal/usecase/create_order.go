@@ -77,3 +77,21 @@ func (c *OrderUsecase) GetOrder(orderID int) (OrderOutputDTO, error) {
 	}
 	return dto, nil
 }
+
+func (c *OrderUsecase) ListOrders() ([]OrderOutputDTO, error) {
+	orders, err := c.OrderRepository.ListOrders()
+	if err != nil {
+		return nil, err
+	}
+
+	var dtos []OrderOutputDTO
+	for _, order := range orders {
+		dtos = append(dtos, OrderOutputDTO{
+			ID:         order.ID,
+			Price:      order.Price,
+			Tax:        order.Tax,
+			FinalPrice: order.FinalPrice,
+		})
+	}
+	return dtos, nil
+}

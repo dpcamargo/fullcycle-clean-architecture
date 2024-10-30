@@ -17,4 +17,5 @@ type Mutation {
 
 type Query {
   getOrder(id: Int!): Order 
+  getList: [Order!]!
 }

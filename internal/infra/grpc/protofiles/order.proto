@@ -15,6 +15,25 @@ message CreateOrderResponse {
     double final_price = 4;
 }
 
+message GetOrderRequest {
+    int32 id = 1;
+}
+
+message GetOrderResponse {
+    int32 id = 1;
+    double price = 2;
+    double tax = 3;
+    double final_price = 4;
+}
+
+message Empty {}
+
+message GetOrderListResponse {
+    repeated GetOrderResponse orders = 1;
+}
+
 service OrderService {
     rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
+    rpc GetOrder(GetOrderRequest) returns (GetOrderResponse);
+    rpc GetList(Empty) returns (GetOrderListResponse);
 }

@@ -43,18 +43,19 @@ func main() {
 		RabbitMQChannel: rabbitMQChannel,
 	})
 
-	createOrderUsecase := NewOrderUseCase(db, eventDispatcher)
+	OrderUsecase := NewOrderUseCase(db, eventDispatcher)
 
 	webServer := webserver.NewWebServer(configs.WebServerPort)
 	webOrderHandler := NewWebOrderHandler(db, eventDispatcher)
 	webServer.AddHandler("/order", webOrderHandler.Create, webserver.POST)
-	webServer.AddHandler("/order", webOrderHandler.Get, webserver.GET)
+	webServer.AddHandler("/order/get", webOrderHandler.Get, webserver.GET)
+	webServer.AddHandler("/order", webOrderHandler.List, webserver.GET)
 	log.Println("Starting web server on port", configs.WebServerPort)
 	go webServer.Start()
 
 	grpcServer := grpc.NewServer()
-	createOrderService := service.NewOrderService(*createOrderUsecase)
-	pb.RegisterOrderServiceServer(grpcServer, createOrderService)
+	orderService := service.NewOrderService(*OrderUsecase)
+	pb.RegisterOrderServiceServer(grpcServer, orderService)
 	reflection.Register(grpcServer)
 	log.Println("Starting gRPC server on port", configs.GRPCServerPort)
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", configs.GRPCServerPort))
@@ -63,7 +64,8 @@ func main() {
 	}
 	go grpcServer.Serve(lis)
 
-	srv := graphHandler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{OrderUseCase: *createOrderUsecase}}))
+	srv := graphHandler.NewDefaultServer(
+		graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{OrderUseCase: *OrderUsecase}}))
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)

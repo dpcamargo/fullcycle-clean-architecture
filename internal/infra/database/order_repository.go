@@ -52,3 +52,19 @@ func (r *OrderRepository) GetOrder(orderId int) (*entity.Order, error) {
 	}
 	return &order, nil
 }
+
+func (r *OrderRepository) ListOrders() ([]entity.Order, error) {
+	var orders []entity.Order
+
+	rows, err := r.Db.Query("SELECT id, price, tax, final_price FROM orders")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var order entity.Order
+	for rows.Next() {
+		rows.Scan(&order.ID, &order.Price, &order.Tax, &order.FinalPrice)
+		orders = append(orders, order)
+	}
+	return orders, nil
+}
