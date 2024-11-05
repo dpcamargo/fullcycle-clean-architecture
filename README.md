@@ -4,11 +4,11 @@ Full Cycle's post graduate course Go Expert challenge to develop a service with 
 
 ## Service Ports
 
-web server on port :8001
+web server on localhost:8001
 
-gRPC server on port 50051
+gRPC server on localhost:50051
 
-GraphQL server on port 8080
+GraphQL server on localhost:8080
 
 ## Starting complimentary services
 
@@ -20,17 +20,17 @@ Test using order_create.http and order_get.http (vscode plugin needed)
 
 ## GraphQL
 
-Open `http://localhost:8080/query` and use the following queries:
+Open `http://localhost:8080` and use the following queries:
 
 ```
 mutation createOrder{
   createOrder(
-  	input: {id: 44, Price: 10, Tax: 100})
+  	input: {id: 123, Price: 100, Tax: 20})
   	{id, Price, Tax, FinalPrice }
 }
 
 query getOrder {
-  getOrder(id: 4) {
+  getOrder(id: 123) {
     id
     Price
     Tax
@@ -51,3 +51,9 @@ query getList {
 ## gRPC
 
 Use `evans -r repl` to connect to gRPC server.
+
+- package pb
+- service OrderService
+- call CreateOrder
+- call GetOrder
+- call GetList

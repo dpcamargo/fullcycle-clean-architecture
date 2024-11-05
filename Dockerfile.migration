@@ -1,9 +1,10 @@
-FROM golang:1.23 AS builder
+FROM golang:1.23-alpine AS builder
 WORKDIR /app
+RUN apk add --no-cache git
 RUN git clone https://github.com/pressly/goose.git .
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags='no_postgres no_sqlite3 no_ydb' -o goose ./cmd/goose
 
-FROM alpine:3.12
+FROM alpine:latest
 WORKDIR /app
 RUN apk add --no-cache bash mysql-client
 COPY /migration .
@@ -13,6 +14,4 @@ COPY --from=builder /app/goose /usr/local/bin/goose
 RUN chmod +x /usr/local/bin/goose
 RUN /usr/local/bin/goose --version
 
-# CMD ["goose", "mysql", "root:root@tcp(mysql:3306)/orders?parseTime=true", "up"]
-# CMD ["sh", "-c", "sleep 10; goose mysql 'root:root@tcp(mysql:3306)/orders?parseTime=true' up"]
 CMD ["sh", "-c", "/usr/local/bin/wait-for-it mysql:3306 -- goose mysql 'root:root@tcp(mysql:3306)/orders?parseTime=true' up"]

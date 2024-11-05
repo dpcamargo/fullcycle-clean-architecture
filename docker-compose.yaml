@@ -40,6 +40,21 @@ services:
     networks:
       - app-network
 
+  order-system:
+    build:
+      context: .
+      dockerfile: Dockerfile.ordersystem
+    depends_on:
+      - migrator
+      - rabbitmq
+      - mysql
+    ports:
+      - 8080:8080
+      - 50051:50051
+      - 8001:8001
+    networks:
+      - app-network
+
 networks:
   app-network:
     driver: bridge
