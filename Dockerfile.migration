@@ -14,4 +14,4 @@ COPY --from=builder /app/goose /usr/local/bin/goose
 RUN chmod +x /usr/local/bin/goose
 RUN /usr/local/bin/goose --version
 
-CMD ["sh", "-c", "/usr/local/bin/wait-for-it mysql:3306 -- goose mysql 'root:root@tcp(mysql:3306)/orders?parseTime=true' up"]
+CMD ["sh", "-c", "/usr/local/bin/wait-for-it mysql:3306 -t 100 -- goose mysql 'root:root@tcp(mysql:3306)/orders?parseTime=true' up"]
